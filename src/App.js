@@ -20,6 +20,7 @@ function Home() {
   const pollData = useStoreState(state => state.polls.pollData);
   const userName = useStoreState(state => state.polls.userName);
   const createPollPage = useStoreActions(actions => actions.polls.createPollPage);
+  const createPoll = useStoreActions(actions => actions.polls.createPoll);
   
   if (!pollPageId) {
     // render home page if on root
@@ -33,6 +34,18 @@ function Home() {
     const polls = Object.keys(pollData.polls || {}).map(pollKey =>
       <Poll key={pollKey} pollKey={pollKey} { ...((pollData.polls || {})[pollKey]) } />
     );
+    const createPollHandler = () => {
+      const pollPayload = {
+        pollPageId,
+        title: prompt("Please enter a poll title", "")
+      };
+      if ((pollPayload.title || "") === "") {
+        return;
+      } else {
+        createPoll(pollPayload);
+      };
+    };
+
     return  (
       <div className="PollPage">
         <p>Logged in as <b>{ userName }</b></p>
@@ -40,6 +53,7 @@ function Home() {
         <div className="PollsContainer">
           { polls }
         </div>
+        <button onClick={createPollHandler}>Add another poll</button>
       </div>
     )
   }

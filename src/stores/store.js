@@ -46,6 +46,27 @@ const pollsModel = {
   }),
 
   // poll
+  createPoll: thunk(async (actions, pollPayload) => {
+    const pollKey = "poll-" + createHash();
+    pollPayload = { ...pollPayload, pollKey };
+    actions.createPollLocal(pollPayload);
+    actions.createPollApi(pollPayload);
+  }),
+  createPollLocal: action((state, pollPayload) => {
+    const { pollKey, title } = pollPayload;
+    var pollData = JSON.parse(JSON.stringify(state.pollData));
+    const options = {};
+    pollData.polls[pollKey] = { title, options };
+    state.pollData = pollData;
+  }),
+  createPollApi: thunk(async (actions, pollPayload) => {
+    await axios.post(apiUrl + "createPoll", pollPayload).then(res => {
+      actions.fetch(pollPayload);
+      console.log(res);
+    }).catch(err => {
+      console.error(err);
+    })
+  }),
 
   // option
   createOption: thunk(async (actions, optionPayload) => {

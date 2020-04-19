@@ -34,6 +34,17 @@ exports.fetchPollPage = functions.https.onRequest((request, response) => {
   });
 })
 
+exports.createPoll = functions.https.onRequest((request, response) => {
+  const { pollPageId, pollKey, title } = request.body;
+  const childPath = `${pollPageId}/polls`;
+  var poll = admin.database().ref("page").child(childPath);
+  
+  var pollData = {};
+  pollData[pollKey] = { title };
+  const snapshot = poll.update(pollData);
+  response.send(snapshot);
+})
+
 exports.createOption = functions.https.onRequest((request, response) => {
   const { pollPageId, pollKey, optionKey, text, userName } = request.body;
   const childPath = `${pollPageId}/polls/${pollKey}/options`;

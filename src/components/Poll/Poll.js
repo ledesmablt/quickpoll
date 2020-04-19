@@ -7,7 +7,7 @@ function Poll({ pollKey, title, users, options }) {
   const pollPageId = useStoreState(state => state.polls.currentPage);
   const userName = useStoreState(state => state.polls.userName);
   const createOption = useStoreActions(actions => actions.polls.createOption)
-  const optionsComponents = Object.keys(options).map(optionKey =>
+  const optionsComponents = Object.keys(options || {}).map(optionKey =>
     <Option key={optionKey} pollKey={pollKey} optionKey={optionKey} { ...options[optionKey] } />
   );
 
