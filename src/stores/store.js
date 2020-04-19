@@ -43,13 +43,14 @@ const pollsModel = {
   // poll
 
   // option
-  updateOption: thunk(async (actions, optionPayload) => {
-    actions.pushOptionLocal(optionPayload);
-    // update api
-  }),
-  pushOptionLocal: action((state, optionPayload) => {
-    const { pollKey, text, userName } = optionPayload;
+  createOption: thunk(async (actions, optionPayload) => {
     const optionKey = "option-" + createHash();
+    optionPayload = { ...optionPayload, optionKey };
+    actions.createOptionLocal(optionPayload);
+    actions.createOptionApi(optionPayload);
+  }),
+  createOptionLocal: action((state, optionPayload) => {
+    const { pollKey, optionKey, text, userName } = optionPayload;
     var optionVotes = {};
     optionVotes[userName] = 1;
     var pollData = JSON.parse(JSON.stringify(state.pollData));
@@ -57,6 +58,13 @@ const pollsModel = {
     currentPoll.options = currentPoll.options || {};
     currentPoll.options[optionKey] = { text, votes: optionVotes };
     state.pollData = pollData;
+  }),
+  createOptionApi: thunk(async (actions, optionPayload) => {
+    await axios.post(apiUrl + "createOption", optionPayload).then(res => {
+      actions.fetch(optionPayload);
+    }).catch(err => {
+      console.error(err);
+    });
   }),
 
   // vote

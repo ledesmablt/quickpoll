@@ -30,7 +30,7 @@ function Home() {
     )
 } else {
     // render poll page
-    const polls = Object.keys(pollData.polls).map(pollKey =>
+    const polls = Object.keys(pollData.polls || {}).map(pollKey =>
       <Poll key={pollKey} pollKey={pollKey} { ...((pollData.polls || {})[pollKey]) } />
     );
     return  (
