@@ -17,14 +17,14 @@ const pollsModel = {
     })
   }),
 
-  currentUser: "",
+  currentUser: "myName",
   setCurrentUser: action((state, newState) => {
     state.currentUser = newState;
   }),
   
-  data: {},
+  pollData: { polls: {} },
   updateData: action((state, newState) => {
-    state.data = newState;
+    state.pollData = newState;
   }),
   fetch: thunk(async (actions, payload) => {
     await axios.post(apiUrl + "fetchPollPage", payload).then(res => {
@@ -32,6 +32,20 @@ const pollsModel = {
     }).catch(err => {
       console.error(err);
     });
+  }),
+
+  pushVoteLocal: action((state, votePayload) => {
+    const currentUser = state.currentUser;
+    const { pollKey, optionKey, newVote } = votePayload;
+    var pollData = JSON.parse(JSON.stringify(state.pollData));
+    var currentOption = pollData.polls[pollKey].options[optionKey];
+    currentOption.votes = currentOption.votes || {};
+    currentOption.votes[currentUser] = newVote;
+    state.pollData = pollData;
+  }),
+  updateVote: thunk(async (actions, votePayload) => {
+    actions.pushVoteLocal(votePayload);
+    // push vote to API
   })
 };
 

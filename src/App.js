@@ -17,22 +17,29 @@ function InitialFetch() {
 
 function Home() {
   const pollPageId = window.location.pathname.slice(1,);
-  const pollData = useStoreState(state => state.polls.data);
+  const pollData = useStoreState(state => state.polls.pollData);
+  const currentUser = useStoreState(state => state.polls.currentUser);
   const createPollPage = useStoreActions(actions => actions.polls.createPollPage);
+  
   if (!pollPageId) {
+    // render home page if on root
     return (
       <div className="Home">
         <button className="Create-page" onClick={createPollPage}>Create poll page</button>
       </div>
     )
 } else {
+    // render poll page
     const polls = Object.keys(pollData.polls).map(pollKey =>
       <Poll key={pollKey} pollKey={pollKey} { ...((pollData.polls || {})[pollKey]) } />
     );
     return  (
       <div className="PollPage">
+        <p>Logged in as <b>{ currentUser }</b></p>
         <h2>{ pollData.title }</h2>
-        { polls }
+        <div className="PollsContainer">
+          { polls }
+        </div>
       </div>
     )
   }

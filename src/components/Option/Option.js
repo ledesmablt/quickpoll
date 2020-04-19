@@ -1,19 +1,21 @@
 import React from 'react';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 
-function Option({ optionKey, text, votes }) {
+function Option({ pollKey, optionKey, text, votes }) {
   const currentUser = useStoreState(state => state.polls.currentUser);
   const updateVote = useStoreActions(actions => actions.polls.updateVote);
-  const selfVoted = Object.keys(votes || {}).includes(currentUser);
+  const selfVoted = (votes || {})[currentUser] === 1;
   
   const handleChange = (event) => {
-    updateVote(event.target.includes("checked"));
+    var votePayload = { pollKey, optionKey };
+    votePayload.newVote = selfVoted ? null : 1;
+    updateVote(votePayload);
   };
 
   return (
     <div className="Option">
       <input type="checkbox" key={optionKey} checked={selfVoted} onChange={handleChange}/>
-      {Object.keys(votes || {}).length} - {text}
+      {Object.values(votes || {}).filter(x => x === 1).length} - {text}
     </div>
   )
 }
