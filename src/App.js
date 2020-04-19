@@ -18,7 +18,7 @@ function InitialFetch() {
 function Home() {
   const pollPageId = window.location.pathname.slice(1,);
   const pollData = useStoreState(state => state.polls.pollData);
-  const currentUser = useStoreState(state => state.polls.currentUser);
+  const userName = useStoreState(state => state.polls.userName);
   const createPollPage = useStoreActions(actions => actions.polls.createPollPage);
   
   if (!pollPageId) {
@@ -35,7 +35,7 @@ function Home() {
     );
     return  (
       <div className="PollPage">
-        <p>Logged in as <b>{ currentUser }</b></p>
+        <p>Logged in as <b>{ userName }</b></p>
         <h2>{ pollData.title }</h2>
         <div className="PollsContainer">
           { polls }

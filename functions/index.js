@@ -33,3 +33,14 @@ exports.fetchPollPage = functions.https.onRequest((request, response) => {
     response.send(err);
   });
 })
+
+exports.modifyVote = functions.https.onRequest((request, response) => {
+  const { pollPageId, pollKey, optionKey, userName, newVote } = request.body;
+  const childPath = `${pollPageId}/polls/${pollKey}/options/${optionKey}/votes`
+  var userVote = admin.database().ref("page").child(childPath);
+  
+  const voteData = {};
+  voteData[userName] = newVote;
+  const snapshot = userVote.update(voteData);
+  response.send(snapshot);
+})
