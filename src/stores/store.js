@@ -34,7 +34,12 @@ const pollsModel = {
   }),
   fetch: thunk(async (actions, payload) => {
     await axios.post(apiUrl + "fetchPollPage", payload).then(res => {
-      actions.updateData(res.data || {})
+      if (Object.keys(res.data || {}).length !== 0) {
+        actions.updateData(res.data);
+      } else {
+        // redirect to home page if page doesn't exist
+        actions.setCurrentPage("");
+      }
     }).catch(err => {
       console.error(err);
     });

@@ -11,10 +11,10 @@ function Poll({ pollKey, title, users, options }) {
     <Option key={optionKey} pollKey={pollKey} optionKey={optionKey} { ...options[optionKey] } />
   );
 
-  const addOption = () => {
+  const createOptionHandler = () => {
     // do now allow adding of duplicate option text
-    var optionPayload = {
-      pollKey, pollPageId, userName,
+    const optionPayload = {
+      pollPageId, pollKey, userName,
       text: prompt("Please enter an option text", ""),
     };
     if ((optionPayload.text || "") === "") {
@@ -28,7 +28,7 @@ function Poll({ pollKey, title, users, options }) {
     <div className="Poll">
       <h3>{title}</h3>
       {optionsComponents}
-      <button onClick={addOption}>Add</button>
+      <button onClick={createOptionHandler}>Add</button>
     </div>
   )
 }
