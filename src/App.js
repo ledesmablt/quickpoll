@@ -1,7 +1,8 @@
 import React from 'react';
 import { StoreProvider, useStoreState, useStoreActions } from 'easy-peasy';
 
-import store from './stores'
+import store from './stores';
+import Poll from './components/Poll';
 
 import './App.css';
 
@@ -21,13 +22,17 @@ function Home() {
   if (!pollPageId) {
     return (
       <div className="Home">
-        <button className="Create-page" onClick={createPollPage}>Create page</button>
+        <button className="Create-page" onClick={createPollPage}>Create poll page</button>
       </div>
     )
 } else {
+    const polls = Object.keys(pollData.polls).map(pollKey =>
+      <Poll key={pollKey} pollKey={pollKey} { ...((pollData.polls || {})[pollKey]) } />
+    );
     return  (
       <div className="PollPage">
-        <p>{JSON.stringify(pollData)}</p>
+        <h2>{ pollData.title }</h2>
+        { polls }
       </div>
     )
   }
