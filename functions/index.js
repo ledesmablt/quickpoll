@@ -1,14 +1,23 @@
 const functions = require('firebase-functions').region('asia-east2');
 const admin = require('firebase-admin');
 const defaultPoll = require('./defaultPoll.json');
+
+// var serviceAccount = require('./../.env.secret.json');
+// if (serviceAccount) {
+//   admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//     databaseURL: "https://quickpoll-941294513.firebaseio.com"
+//   });
+// } else {
 admin.initializeApp();
+// }
 
 
 function createHash() {
   return Math.floor(new Date().getTime() + Math.random() * 10**12).toString(36);
 }
 
-exports.createPollPage = functions.https.onRequest((request, response) => {
+createPollPage = functions.https.onRequest((request, response) => {
   // create new default poll
   const pollPageId = createHash();
   var ref = admin.database().ref("page").child(pollPageId);
@@ -21,7 +30,7 @@ exports.createPollPage = functions.https.onRequest((request, response) => {
   });
 })
 
-exports.fetchPollPage = functions.https.onRequest((request, response) => {
+fetchPollPage = functions.https.onRequest((request, response) => {
   // fetch all poll data from pollPageId
   const pollPageId = request.body.pollPageId;
   const pollPage = admin.database().ref("page").child(pollPageId);
@@ -34,7 +43,7 @@ exports.fetchPollPage = functions.https.onRequest((request, response) => {
   });
 })
 
-exports.createPoll = functions.https.onRequest((request, response) => {
+createPoll = functions.https.onRequest((request, response) => {
   const { pollPageId, pollKey, title } = request.body;
   const childPath = `${pollPageId}/polls`;
   var poll = admin.database().ref("page").child(childPath);
@@ -45,7 +54,7 @@ exports.createPoll = functions.https.onRequest((request, response) => {
   response.send(snapshot);
 })
 
-exports.createOption = functions.https.onRequest((request, response) => {
+createOption = functions.https.onRequest((request, response) => {
   const { pollPageId, pollKey, optionKey, text, userName } = request.body;
   const childPath = `${pollPageId}/polls/${pollKey}/options`;
   var option = admin.database().ref("page").child(childPath);
@@ -57,7 +66,7 @@ exports.createOption = functions.https.onRequest((request, response) => {
   response.send(snapshot);
 })
 
-exports.modifyVote = functions.https.onRequest((request, response) => {
+modifyVote = functions.https.onRequest((request, response) => {
   const { pollPageId, pollKey, optionKey, userName, newVote } = request.body;
   const childPath = `${pollPageId}/polls/${pollKey}/options/${optionKey}/votes`;
   var userVote = admin.database().ref("page").child(childPath);

@@ -1,7 +1,6 @@
 import { createStore, action, computed, thunk } from 'easy-peasy';
-import axios from 'axios';
+import * as firebaseFunctions from './../firebase';
 
-const apiUrl = `${process.env.REACT_APP_CORS_PROXY || ""}${process.env.REACT_APP_APIURL}`;
 function createHash() {
   return Math.floor(new Date().getTime() + Math.random() * 10**12).toString(36);
 }
@@ -19,9 +18,9 @@ const pollsModel = {
     state.currentPage = newState;
     window.location.pathname = "/" + newState;
   }),
-  createPollPage: thunk(async (actions, payload) => {
-    await axios.get(apiUrl + "createPollPage").then(res => {
-      actions.setCurrentPage(res.data.pollPageId);
+  createPollPage: thunk((actions, payload) => {
+    firebaseFunctions.createPollPage().then(res => {
+      actions.setCurrentPage(res.pollPageId);
     }).catch(err => {
       console.error(err);
     })
@@ -32,10 +31,10 @@ const pollsModel = {
   updateData: action((state, newState) => {
     state.pollData = newState;
   }),
-  fetch: thunk(async (actions, payload) => {
-    await axios.post(apiUrl + "fetchPollPage", payload).then(res => {
-      if (Object.keys(res.data || {}).length !== 0) {
-        actions.updateData(res.data);
+  fetch: thunk((actions, payload) => {
+    firebaseFunctions.fetchPollPage(payload).then(res => {
+      if (res) {
+        actions.updateData(res);
       } else {
         // redirect to home page if page doesn't exist
         actions.setCurrentPage("");
@@ -46,11 +45,11 @@ const pollsModel = {
   }),
 
   // poll
-  createPoll: thunk(async (actions, pollPayload) => {
+  createPoll: thunk((actions, pollPayload) => {
     const pollKey = "poll-" + createHash();
     pollPayload = { ...pollPayload, pollKey };
     actions.createPollLocal(pollPayload);
-    actions.createPollApi(pollPayload);
+    actions.createPollFirebase(pollPayload);
   }),
   createPollLocal: action((state, pollPayload) => {
     const { pollKey, title } = pollPayload;
@@ -59,21 +58,20 @@ const pollsModel = {
     pollData.polls[pollKey] = { title, options };
     state.pollData = pollData;
   }),
-  createPollApi: thunk(async (actions, pollPayload) => {
-    await axios.post(apiUrl + "createPoll", pollPayload).then(res => {
+  createPollFirebase: thunk((actions, pollPayload) => {
+    firebaseFunctions.createPoll(pollPayload).then(res => {
       actions.fetch(pollPayload);
-      console.log(res);
     }).catch(err => {
       console.error(err);
     })
   }),
 
   // option
-  createOption: thunk(async (actions, optionPayload) => {
+  createOption: thunk((actions, optionPayload) => {
     const optionKey = "option-" + createHash();
     optionPayload = { ...optionPayload, optionKey };
     actions.createOptionLocal(optionPayload);
-    actions.createOptionApi(optionPayload);
+    actions.createOptionFirebase(optionPayload);
   }),
   createOptionLocal: action((state, optionPayload) => {
     const { pollKey, optionKey, text, userName } = optionPayload;
@@ -85,8 +83,8 @@ const pollsModel = {
     currentPoll.options[optionKey] = { text, votes: optionVotes };
     state.pollData = pollData;
   }),
-  createOptionApi: thunk(async (actions, optionPayload) => {
-    await axios.post(apiUrl + "createOption", optionPayload).then(res => {
+  createOptionFirebase: thunk((actions, optionPayload) => {
+    firebaseFunctions.createOption(optionPayload).then(res => {
       actions.fetch(optionPayload);
     }).catch(err => {
       console.error(err);
@@ -94,9 +92,9 @@ const pollsModel = {
   }),
 
   // vote
-  updateVote: thunk(async (actions, votePayload) => {
+  updateVote: thunk((actions, votePayload) => {
     actions.pushVoteLocal(votePayload);
-    actions.pushVoteApi(votePayload);
+    actions.pushVoteFirebase(votePayload);
   }),
   pushVoteLocal: action((state, votePayload) => {
     const { pollKey, optionKey, userName, newVote } = votePayload;
@@ -106,8 +104,8 @@ const pollsModel = {
     currentOption.votes[userName] = newVote;
     state.pollData = pollData;
   }),
-  pushVoteApi: thunk(async (actions, votePayload) => {
-    await axios.post(apiUrl + "modifyVote", votePayload).then(res => {
+  pushVoteFirebase: thunk((actions, votePayload) => {
+    firebaseFunctions.modifyVote(votePayload).then(res => {
       actions.fetch(votePayload);
     }).catch(err => {
       console.error(err);
