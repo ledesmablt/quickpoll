@@ -1,0 +1,21 @@
+.Poll {
+    width: 80vw;
+    max-width: 600px;
+}
+.PollHeader {
+    margin-bottom: 20px;
+}
+.PollHeader h3 {
+    display: inline;
+}
+.DeletePoll {
+    display: none;
+    float: right;
+}
+.PollHeader:hover .DeletePoll {
+    display: inline;
+}
+.CreateOption {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}

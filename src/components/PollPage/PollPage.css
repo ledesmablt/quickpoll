@@ -1,0 +1,23 @@
+.PollPage {
+    width: 80vw;
+    max-width: 600px;
+}
+.UserSection {
+    margin-bottom: 30px;
+}
+.UserInfo,
+.PageTitle {
+    display: inline;
+}
+.ChangeUserName,
+.ChangePageTitle {
+    display: none;
+    float: right;
+}
+.UserSection:hover .ChangeUserName,
+.PageTitleContainer:hover .ChangePageTitle {
+    display: inline;
+}
+.PollsContainer {
+    margin-top: 30px;
+}

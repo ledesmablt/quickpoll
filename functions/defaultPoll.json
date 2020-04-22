@@ -1,0 +1,23 @@
+{
+  "title": "Mini Reunion",
+  "polls": {
+    "poll-1": {
+      "title": "Where",
+      "options": {
+        "option-1": { "text": "Pizza Kitchen", "votes": { "default": 1 } },
+        "option-2": { "text": "My house", "votes": { "default": 1 } },
+        "option-3": { "text": "KFC :(", "votes": {} }
+      }
+    },
+    "poll-2": {
+      "title": "When",
+        "options": {
+          "option-1": { "text": "Friday", "votes": { "default": 1 } },
+          "option-2": { "text": "Saturday", "votes": {} }
+        }
+    }
+  },
+  "users": {
+    "default": 1
+  }
+}

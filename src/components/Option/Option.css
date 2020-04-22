@@ -1,0 +1,14 @@
+.Option {
+    width: 80vw;
+    max-width: 600px;
+}
+.Option p {
+    display: inline;
+}
+.DeleteOption {
+    display: none;
+    float: right;
+}
+.Option:hover .DeleteOption {
+    display: inline;
+}
