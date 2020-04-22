@@ -59,12 +59,13 @@ export async function createOption(payload) {
 }
 
 export async function modifyVote(payload) {
-  const { pollPageId, pollKey, optionKey, userName, newVote } = payload;
-  const childPath = `${pollPageId}/polls/${pollKey}/options/${optionKey}/votes`;
-  var userVote = firebase.database().ref("page").child(childPath);
+  const { pollPageId, pollKey, optionKey, userName, newVote, modifiedTime } = payload;
+  const childPath = `${pollPageId}/polls/${pollKey}/options/${optionKey}`;
+  var option = firebase.database().ref("page").child(childPath);
+  var userVote = option.child('votes');
   
   const voteData = {};
   voteData[userName] = newVote;
-  const snapshot = userVote.update(voteData);
+  const snapshot = [userVote.update(voteData), option.update({ modifiedTime })];
   return snapshot;
 }

@@ -8,8 +8,11 @@ function Option({ pollKey, optionKey, text, votes }) {
   const selfVoted = (votes || {})[userName] === 1;
   
   const changeVote = () => {
-    var votePayload = { pollPageId, pollKey, optionKey, userName };
-    votePayload.newVote = selfVoted ? null : 1;
+    var votePayload = {
+      pollPageId, pollKey, optionKey, userName,
+      newVote: selfVoted ? null : 1,
+      modifiedTime: (new Date()).getTime()
+    };
     updateVote(votePayload);
   };
 

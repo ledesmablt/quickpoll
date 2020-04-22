@@ -74,13 +74,13 @@ const pollsModel = {
     actions.createOptionFirebase(optionPayload);
   }),
   createOptionLocal: action((state, optionPayload) => {
-    const { pollKey, optionKey, text, userName } = optionPayload;
+    const { pollKey, optionKey, text, userName, modifiedTime } = optionPayload;
     var optionVotes = {};
     optionVotes[userName] = 1;
     var pollData = JSON.parse(JSON.stringify(state.pollData));
     var currentPoll = pollData.polls[pollKey];
     currentPoll.options = currentPoll.options || {};
-    currentPoll.options[optionKey] = { text, votes: optionVotes };
+    currentPoll.options[optionKey] = { text, modifiedTime, votes: optionVotes };
     state.pollData = pollData;
   }),
   createOptionFirebase: thunk((actions, optionPayload) => {
@@ -97,11 +97,12 @@ const pollsModel = {
     actions.pushVoteFirebase(votePayload);
   }),
   pushVoteLocal: action((state, votePayload) => {
-    const { pollKey, optionKey, userName, newVote } = votePayload;
+    const { pollKey, optionKey, userName, newVote, modifiedTime } = votePayload;
     var pollData = JSON.parse(JSON.stringify(state.pollData));
     var currentOption = pollData.polls[pollKey].options[optionKey];
     currentOption.votes = currentOption.votes || {};
     currentOption.votes[userName] = newVote;
+    currentOption.modifiedTime = modifiedTime;
     state.pollData = pollData;
   }),
   pushVoteFirebase: thunk((actions, votePayload) => {
