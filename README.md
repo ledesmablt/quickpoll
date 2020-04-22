@@ -10,4 +10,4 @@ Web app for creating shareable polls running completely on [Firebase](https://fi
 
 
 ## Sample Image
-![Sample](/public/polls-sample.png)
+![Sample](/public/polls-sample.PNG)
