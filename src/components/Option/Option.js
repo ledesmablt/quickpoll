@@ -30,7 +30,7 @@ function Option({ pollKey, optionKey, text, votes }) {
     <div className="Option">
       <input type="checkbox" key={optionKey} checked={selfVoted} onChange={changeVoteHandler}/>
       <p>{Object.values(votes || {}).filter(x => x === 1).length} - {text}</p>
-      <button className="Delete" onClick={deleteOptionHandler}>X</button>
+      <button className="DeleteOption" onClick={deleteOptionHandler}>X</button>
     </div>
   )
 }

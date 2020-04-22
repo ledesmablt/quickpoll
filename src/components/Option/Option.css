@@ -5,6 +5,10 @@
 .Option p {
     display: inline;
 }
-.Option .Delete {
+.DeleteOption {
+    display: none;
     float: right;
+}
+.Option:hover .DeleteOption {
+    display: inline;
 }

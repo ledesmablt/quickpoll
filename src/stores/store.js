@@ -45,21 +45,34 @@ const pollsModel = {
   }),
 
   // poll
-  createPoll: thunk((actions, pollPayload) => {
-    const pollKey = "poll-" + createHash();
+  modifyPoll: thunk((actions, pollPayload) => {
+    const pollKey = pollPayload.pollKey || "poll-" + createHash();
     pollPayload = { ...pollPayload, pollKey };
-    actions.createPollLocal(pollPayload);
-    actions.createPollFirebase(pollPayload);
+    actions.modifyPollLocal(pollPayload);
+    actions.modifyPollFirebase(pollPayload);
   }),
-  createPollLocal: action((state, pollPayload) => {
-    const { pollKey, title } = pollPayload;
+  modifyPollLocal: action((state, pollPayload) => {
+    const { pollKey, title, action } = pollPayload;
     var pollData = JSON.parse(JSON.stringify(state.pollData));
-    const options = {};
-    pollData.polls[pollKey] = { title, options };
+    if (action === "delete") {
+      delete pollData.polls[pollKey];
+    } else {
+      const options = {};
+      pollData.polls[pollKey] = { title, options };
+    }
     state.pollData = pollData;
   }),
-  createPollFirebase: thunk((actions, pollPayload) => {
-    firebaseFunctions.createPoll(pollPayload).then(res => {
+  modifyPollFirebase: thunk((actions, pollPayload) => {
+    let promise;
+    switch (pollPayload.action) {
+      case "delete":
+        promise = firebaseFunctions.deletePoll(pollPayload);
+        break;
+      default:
+        promise = firebaseFunctions.createPoll(pollPayload);
+        break;
+    }
+    promise.then(res => {
       actions.fetch(pollPayload);
     }).catch(err => {
       console.error(err);

@@ -20,7 +20,7 @@ function Home() {
   const pollData = useStoreState(state => state.polls.pollData);
   const userName = useStoreState(state => state.polls.userName);
   const createPollPage = useStoreActions(actions => actions.polls.createPollPage);
-  const createPoll = useStoreActions(actions => actions.polls.createPoll);
+  const modifyPoll = useStoreActions(actions => actions.polls.modifyPoll);
   
   if (!pollPageId) {
     // render home page if on root
@@ -42,7 +42,7 @@ function Home() {
       if ((pollPayload.title || "") === "") {
         return;
       } else {
-        createPoll(pollPayload);
+        modifyPoll(pollPayload);
       };
     };
 

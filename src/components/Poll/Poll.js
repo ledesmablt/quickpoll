@@ -1,12 +1,15 @@
 import React from 'react';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 
-import Option from './../Option'
+import Option from './../Option';
+import './Poll.css';
 
 function Poll({ pollKey, title, users, options }) {
   const pollPageId = useStoreState(state => state.polls.currentPage);
   const userName = useStoreState(state => state.polls.userName);
-  const modifyOption = useStoreActions(actions => actions.polls.modifyOption)
+  const modifyPoll = useStoreActions(actions => actions.polls.modifyPoll);
+  const modifyOption = useStoreActions(actions => actions.polls.modifyOption);
+  
   const optionKeysSorted = (Object.keys(options || {}).length === 0)
     ? []
     : Object.keys(options).map(optionKey => {
@@ -30,25 +33,43 @@ function Poll({ pollKey, title, users, options }) {
     <Option key={optionKey} pollKey={pollKey} optionKey={optionKey} { ...options[optionKey] } />
   );
 
+  // event handlers
   const createOptionHandler = () => {
-    // do now allow adding of duplicate option text
     const optionPayload = {
       pollPageId, pollKey, userName,
       text: prompt("Please enter an option text", ""),
       modifiedTime: (new Date()).getTime()
     };
+    const optionTexts = optionKeysSorted.map(key => options[key].text);
     if ((optionPayload.text || "") === "") {
+      return;
+    } else if (optionTexts.includes(optionPayload.text)) {
+      alert("That option already exists.");
       return;
     } else {
       modifyOption(optionPayload);
     };
   };
+  const deletePollHandler = () => {
+    var confirmDelete = window.confirm("Delete this poll? This will also delete all options.");
+    if (!confirmDelete) {
+      return;
+    } else {
+      const optionPayload = {
+        pollPageId, pollKey,
+        action: "delete"
+      };
+      modifyPoll(optionPayload);
+    }
+  };
   
   return (
     <div className="Poll">
-      <h3>{title}</h3>
+      <div className="PollHeader">
+        <h3>{title}</h3><button className="DeletePoll" onClick={deletePollHandler}>Delete Poll</button>
+      </div>
       {optionsComponents}
-      <button onClick={createOptionHandler}>Add</button>
+      <button className="CreateOption" onClick={createOptionHandler}>Add</button>
     </div>
   )
 }
