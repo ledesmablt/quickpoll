@@ -6,7 +6,7 @@ import Option from './../Option'
 function Poll({ pollKey, title, users, options }) {
   const pollPageId = useStoreState(state => state.polls.currentPage);
   const userName = useStoreState(state => state.polls.userName);
-  const createOption = useStoreActions(actions => actions.polls.createOption)
+  const modifyOption = useStoreActions(actions => actions.polls.modifyOption)
   const optionKeysSorted = (Object.keys(options || {}).length === 0)
     ? []
     : Object.keys(options).map(optionKey => {
@@ -40,7 +40,7 @@ function Poll({ pollKey, title, users, options }) {
     if ((optionPayload.text || "") === "") {
       return;
     } else {
-      createOption(optionPayload);
+      modifyOption(optionPayload);
     };
   };
   

@@ -58,6 +58,14 @@ export async function createOption(payload) {
   return snapshot;
 }
 
+export async function deleteOption(payload) {
+  const { pollPageId, pollKey, optionKey } = payload;
+  const childPath = `${pollPageId}/polls/${pollKey}/options/${optionKey}`;
+  var option = firebase.database().ref("page").child(childPath);
+  const snapshot = option.remove();
+  return snapshot;
+}
+
 export async function modifyVote(payload) {
   const { pollPageId, pollKey, optionKey, userName, newVote, modifiedTime } = payload;
   const childPath = `${pollPageId}/polls/${pollKey}/options/${optionKey}`;

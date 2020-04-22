@@ -67,24 +67,37 @@ const pollsModel = {
   }),
 
   // option
-  createOption: thunk((actions, optionPayload) => {
-    const optionKey = "option-" + createHash();
+  modifyOption: thunk((actions, optionPayload) => {
+    const optionKey = optionPayload.optionKey || "option-" + createHash();
     optionPayload = { ...optionPayload, optionKey };
-    actions.createOptionLocal(optionPayload);
-    actions.createOptionFirebase(optionPayload);
+    actions.modifyOptionLocal(optionPayload);
+    actions.modifyOptionFirebase(optionPayload);
   }),
-  createOptionLocal: action((state, optionPayload) => {
-    const { pollKey, optionKey, text, userName, modifiedTime } = optionPayload;
-    var optionVotes = {};
-    optionVotes[userName] = 1;
+  modifyOptionLocal: action((state, optionPayload) => {
+    const { pollKey, optionKey, text, userName, modifiedTime, action } = optionPayload;
+    var votes = {};
+    votes[userName] = 1;
     var pollData = JSON.parse(JSON.stringify(state.pollData));
     var currentPoll = pollData.polls[pollKey];
     currentPoll.options = currentPoll.options || {};
-    currentPoll.options[optionKey] = { text, modifiedTime, votes: optionVotes };
+    if (action === "delete") {
+      delete currentPoll.options[optionKey];
+    } else {
+      currentPoll.options[optionKey] = { text, modifiedTime, votes };
+    }
     state.pollData = pollData;
   }),
-  createOptionFirebase: thunk((actions, optionPayload) => {
-    firebaseFunctions.createOption(optionPayload).then(res => {
+  modifyOptionFirebase: thunk((actions, optionPayload) => {
+    let promise;
+    switch (optionPayload.action) {
+      case "delete":
+        promise = firebaseFunctions.deleteOption(optionPayload);
+        break;
+      default:
+        promise = firebaseFunctions.createOption(optionPayload);
+        break;
+    }
+    promise.then(res => {
       actions.fetch(optionPayload);
     }).catch(err => {
       console.error(err);
