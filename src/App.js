@@ -2,25 +2,29 @@ import React from 'react';
 import { StoreProvider, useStoreState, useStoreActions } from 'easy-peasy';
 
 import store from './stores';
-import Poll from './components/Poll';
-
+import PollPage from './components/PollPage';
 import './App.css';
 
 function InitialFetch() {
   const pollPageId = window.location.pathname.slice(1,);
+  var userName = useStoreState(state => state.polls.userName);
+  const setUserName = useStoreActions(actions => actions.polls.setUserName);
   const fetchData = useStoreActions(actions => actions.polls.fetch);
+
   if (pollPageId) {
-    fetchData({ pollPageId });
+    if (userName === "default") {
+      userName = prompt("Please enter your username (temporary)", "");
+      setUserName(userName);
+    } else {
+      fetchData({ pollPageId });
+    }
   };
   return null;
 }
 
 function Home() {
   const pollPageId = window.location.pathname.slice(1,);
-  const pollData = useStoreState(state => state.polls.pollData);
-  const userName = useStoreState(state => state.polls.userName);
   const createPollPage = useStoreActions(actions => actions.polls.createPollPage);
-  const modifyPoll = useStoreActions(actions => actions.polls.modifyPoll);
   
   if (!pollPageId) {
     // render home page if on root
@@ -29,32 +33,10 @@ function Home() {
         <button className="Create-page" onClick={createPollPage}>Create poll page</button>
       </div>
     )
-} else {
+  } else {
     // render poll page
-    const polls = Object.keys(pollData.polls || {}).map(pollKey =>
-      <Poll key={pollKey} pollKey={pollKey} { ...((pollData.polls || {})[pollKey]) } />
-    );
-    const createPollHandler = () => {
-      const pollPayload = {
-        pollPageId,
-        title: prompt("Please enter a poll title", "")
-      };
-      if ((pollPayload.title || "") === "") {
-        return;
-      } else {
-        modifyPoll(pollPayload);
-      };
-    };
-
-    return  (
-      <div className="PollPage">
-        <p>Logged in as <b>{ userName }</b></p>
-        <h2>{ pollData.title }</h2>
-        <div className="PollsContainer">
-          { polls }
-        </div>
-        <button onClick={createPollHandler}>Add another poll</button>
-      </div>
+    return (
+      <PollPage />
     )
   }
 }

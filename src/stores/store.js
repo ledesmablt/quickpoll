@@ -7,9 +7,24 @@ function createHash() {
 
 const pollsModel = {
   // userName
-  userName: "myName",
-  setUserName: action((state, newState) => {
-    state.userName = newState;
+  userName: "default",
+  setUserName: action((state, newUserName) => {
+    state.userName = newUserName || ("anonymous-" + createHash());
+  }),
+  userList: computed(state => {
+    let polls = state.pollData.polls;
+    var users = [];
+    for (let pollKey in polls) {
+      if (typeof polls[pollKey] === "undefined") {
+        continue;
+      }
+      let options = polls[pollKey].options;
+      for (let optionKey in options) {
+        let votes = options[optionKey].votes;
+        users = users.concat(Object.keys(votes || {}));
+      }
+    }
+    return new Set(users);
   }),
 
   // poll page

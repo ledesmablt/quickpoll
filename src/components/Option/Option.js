@@ -10,6 +10,7 @@ function Option({ pollKey, optionKey, text, votes }) {
   const updateVote = useStoreActions(actions => actions.polls.updateVote);
   const selfVoted = (votes || {})[userName] === 1;
   
+  // event handlers
   const changeVoteHandler = () => {
     const votePayload = {
       pollPageId, pollKey, optionKey, userName,
