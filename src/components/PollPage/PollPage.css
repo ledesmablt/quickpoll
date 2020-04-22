@@ -5,14 +5,17 @@
 .UserSection {
     margin-bottom: 30px;
 }
-.UserInfo {
+.UserInfo,
+.PageTitle {
     display: inline;
 }
-.ChangeUserName {
+.ChangeUserName,
+.ChangePageTitle {
     display: none;
     float: right;
 }
-.UserSection:hover .ChangeUserName {
+.UserSection:hover .ChangeUserName,
+.PageTitleContainer:hover .ChangePageTitle {
     display: inline;
 }
 .PollsContainer {

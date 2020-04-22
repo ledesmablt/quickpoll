@@ -6,10 +6,11 @@ import './PollPage.css';
 
 function PollPage() {
   const pollPageId = useStoreState(state => state.polls.currentPage);
-  const pollData = useStoreState(state => state.polls.pollData);
-  const userName = useStoreState(state => state.polls.userName);
-  const userList = useStoreState(state => state.polls.userList);
+  var pollData = useStoreState(state => state.polls.pollData);
+  var userName = useStoreState(state => state.polls.userName);
   const setUserName = useStoreActions(actions => actions.polls.setUserName);
+  const userList = useStoreState(state => state.polls.userList);
+  const modifyPageTitle = useStoreActions(actions => actions.polls.modifyPageTitle);
   const modifyPoll = useStoreActions(actions => actions.polls.modifyPoll);
 
   const polls = Object.keys(pollData.polls || {}).map(pollKey =>
@@ -29,18 +30,25 @@ function PollPage() {
     };
   };
   const changeUserNameHandler = () => {
-    var userName = prompt("Please enter your username (temporary)", "");
+    userName = prompt("Please enter your username (temporary)", "");
     setUserName(userName);
+  };
+  const changePageTitleHandler = () => {
+    var title = prompt("Please enter a new page title", pollData.title);
+    modifyPageTitle({ pollPageId, title });
   };
 
   return  (
     <div className="PollPage">
       <div className="UserSection">
         <p className="UserInfo">Logged in as <b>{ userName }</b></p>
-        <button className="ChangeUserName" onClick={changeUserNameHandler}>Change</button>
+        <button className="ChangeUserName" onClick={changeUserNameHandler}>Change user</button>
         <p><b>Users</b>: { Array.from(userList).join(", ") }</p>
       </div>
-      <h2>{ pollData.title }</h2>
+      <div className="PageTitleContainer">
+        <h2 className="PageTitle">{ pollData.title }</h2>
+        <button className="ChangePageTitle" onClick={changePageTitleHandler}>Change title</button>
+      </div>
       <hr />
       <div className="PollsContainer">
         { polls }

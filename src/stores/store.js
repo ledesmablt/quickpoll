@@ -40,6 +40,17 @@ const pollsModel = {
       console.error(err);
     })
   }),
+  modifyPageTitle: thunk((actions, payload) => {
+    actions.modifyPageTitleLocal(payload.title);
+    firebaseFunctions.modifyPageTitle(payload).then(res => {
+      actions.fetch(payload);
+    }).catch(err => {
+      console.error(err);
+    })
+  }),
+  modifyPageTitleLocal: action((state, title) => {
+    state.pollData.title = title;
+  }),
 
   // poll page data
   pollData: { polls: {} },

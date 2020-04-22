@@ -21,6 +21,14 @@ export async function createPollPage() {
   });
 }
 
+export async function modifyPageTitle(payload) {
+  // create new default poll
+  const { pollPageId, title } = payload;
+  var ref = firebase.database().ref("page").child(pollPageId);
+  return ref.update({ title }).then(snapshot => {
+    return snapshot;
+  });
+}
 
 export async function fetchPollPage(payload) {
   // fetch all poll data from pollPageId
