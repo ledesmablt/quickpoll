@@ -58,6 +58,9 @@ const pollsModel = {
       delete pollData.polls[pollKey];
     } else {
       const options = {};
+      if (typeof pollData.polls === "undefined") {
+        pollData.polls = {};
+      }
       pollData.polls[pollKey] = { title, options };
     }
     state.pollData = pollData;
@@ -91,6 +94,9 @@ const pollsModel = {
     var votes = {};
     votes[userName] = 1;
     var pollData = JSON.parse(JSON.stringify(state.pollData));
+    if (typeof pollData.polls === "undefined") {
+      pollData.polls = {};
+    }
     var currentPoll = pollData.polls[pollKey];
     currentPoll.options = currentPoll.options || {};
     if (action === "delete") {
